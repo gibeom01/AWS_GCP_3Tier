@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:5.7  # MySQL 5.7 image for compatibility
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # MySQL root password
+      MYSQL_DATABASE: pratice_board  # Initial database to be created
+      MYSQL_USER: user  # MySQL username
+      MYSQL_PASSWORD: userpassword  # MySQL user password
+    volumes:
+      - mysql_data:/var/lib/mysql  # Persist MySQL data
+      - ./createDB.sql:/docker-entrypoint-initdb.d/createDB.sql  # Initialize database with SQL
+    ports:
+      - "3306:3306"  # Expose MySQL on port 3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]  # Check MySQL service health
+      interval: 30s
+      retries: 3
+      start_period: 30s
+      timeout: 10s
+    networks:
+      - backend  # Use a specific network for communication
+
+volumes:
+  mysql_data:  # Volume to persist MySQL data
+
+networks:
+  backend:
+    driver: bridge  # Ensure containers use the same network for communication

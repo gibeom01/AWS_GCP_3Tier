@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 목록</title>
+</head>
+<body>
+    <h1>주문 목록</h1>
+    <table id="orderTable" border="1">
+        <thead>
+            <tr>
+                <th>제품 ID</th>
+                <th>주문 날짜</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%
+                String jdbcUrl = "jdbc:mysql://10.10.20.46:3306/pratice_board"; // MySQL 데이터베이스 URL
+                String dbId = "root"; // MySQL 데이터베이스 사용자 이름
+                String dbPwd = "root"; // MySQL 데이터베이스 비밀번호
+                Connection connection = null;
+                Statement statement = null;
+                ResultSet resultSet = null;
+
+                try {
+                    // MySQL 드라이버 로드
+                    Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL 드라이버
+                    connection = DriverManager.getConnection(jdbcUrl, dbId, dbPwd); // 데이터베이스 연결
+                    statement = connection.createStatement(); // SQL 쿼리 실행 준비
+
+                    // SQL 쿼리 실행
+                    String sql = "SELECT product_id, order_date FROM orderlist"; // 실제 테이블 이름 사용
+                    resultSet = statement.executeQuery(sql); // 쿼리 실행
+
+                    // 테이블에 데이터 추가
+                    while (resultSet.next()) {
+                        String productId = resultSet.getString("product_id"); // 제품 ID
+                        String orderDate = resultSet.getString("order_date"); // 주문 날짜
+                        out.println("<tr><td>" + productId + "</td><td>" + orderDate + "</td></tr>"); // 테이블에 추가
+                    }
+
+                } catch (Exception ex) {
+                    out.println("<tr><td colspan='2'>오류: " + ex.getMessage() + "</td></tr>"); // 오류 발생 시 출력
+                } finally {
+                    try {
+                        if (resultSet != null) resultSet.close(); // 리소스 닫기
+                        if (statement != null) statement.close();
+                        if (connection != null) connection.close();
+                    } catch (SQLException e) {
+                        out.println("<tr><td colspan='2'>리소스 닫기 오류: " + e.getMessage() + "</td></tr>"); // 리소스 닫기 오류 처리
+                    }
+                }
+            %>
+        </tbody>
+    </table>
+</body>
+</html>
