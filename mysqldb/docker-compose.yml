@@ -20,7 +20,23 @@ services:
       start_period: 30s
       timeout: 10s
     networks:
-      - backend  # Use a specific network for communication
+      - backend
+
+  tomcatwas:
+    build:
+      context: ~/tomcatwas
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+  nginxweb:
+    build:
+      context: ~/nginxweb
+    ports:
+      - "80:80"
+    networks:
+      - backend
 
 volumes:
   mysql_data:  # Volume to persist MySQL data
